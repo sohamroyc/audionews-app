@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 const NEWS_DATA = [
@@ -12,117 +12,122 @@ const NEWS_DATA = [
 export default function NewsDashboardScreen({ navigation }) {
     return (
         <SafeAreaView style={styles.container}>
-            {/* Header */}
-            <View style={styles.header}>
-                <TouchableOpacity style={styles.langBtn}>
-                    <Text style={styles.langText}>A/A</Text>
-                </TouchableOpacity>
-                <Text style={styles.logoTitle}>VoxNews</Text>
-                <View style={styles.headerRight}>
-                    <TouchableOpacity style={styles.iconBtn}>
-                        <Ionicons name="search" size={24} color="#64748B" />
+            <View style={styles.contentContainer}>
+                {/* Header */}
+                <View style={styles.header}>
+                    <TouchableOpacity style={styles.langBtn}>
+                        <Text style={styles.langText}>A/A</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.iconBtn}>
-                        <Ionicons name="notifications" size={24} color="#64748B" />
-                        <View style={styles.notificationDot} />
-                    </TouchableOpacity>
+                    <Text style={styles.logoTitle}>VoxNews</Text>
+                    <View style={styles.headerRight}>
+                        <TouchableOpacity style={styles.iconBtn}>
+                            <Ionicons name="search" size={24} color="#64748B" />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.iconBtn}>
+                            <Ionicons name="notifications" size={24} color="#64748B" />
+                            <View style={styles.notificationDot} />
+                        </TouchableOpacity>
+                    </View>
                 </View>
-            </View>
 
-            <ScrollView contentContainerStyle={styles.scroll}>
+                <ScrollView contentContainerStyle={styles.scroll}>
 
-                {/* Player Card */}
-                <View style={styles.playerCard}>
-                    <View style={styles.playerHeaderRow}>
-                        <View style={styles.nowPlayingBadge}>
-                            <Text style={styles.nowPlayingText}>NOW PLAYING</Text>
+                    {/* Player Card */}
+                    <View style={styles.playerCard}>
+                        <View style={styles.playerHeaderRow}>
+                            <View style={styles.nowPlayingBadge}>
+                                <Text style={styles.nowPlayingText}>NOW PLAYING</Text>
+                            </View>
+                            <View style={styles.xpBadge}>
+                                <Ionicons name="star" size={12} color="#0EA5E9" style={{ marginRight: 4 }} />
+                                <Text style={styles.xpText}>+15 XP</Text>
+                            </View>
                         </View>
-                        <View style={styles.xpBadge}>
-                            <Ionicons name="star" size={12} color="#0EA5E9" style={{ marginRight: 4 }} />
-                            <Text style={styles.xpText}>+15 XP</Text>
+
+                        <Text style={styles.playerTitle}>AI Ethics: The Global Race to Regulate the...</Text>
+
+                        {/* Visualizer Mock */}
+                        <View style={styles.visualizerContainer}>
+                            {[1, 2, 4, 3, 5, 2, 6, 3, 2, 5, 4, 2].map((val, idx) => (
+                                <View key={idx} style={[styles.bar, { height: val * 10 }]} />
+                            ))}
+                        </View>
+
+                        {/* Progress Bar */}
+                        <View style={styles.progressContainer}>
+                            <View style={styles.progressTrack}>
+                                <View style={styles.progressFill} />
+                            </View>
+                        </View>
+
+                        <View style={styles.timeRow}>
+                            <Text style={styles.timeText}>2:45 remaining</Text>
+                            <View style={styles.authorContainer}>
+                                <Ionicons name="person-circle" size={16} color="#475569" style={{ marginRight: 4 }} />
+                                <Text style={styles.authorText}>AI Voice: Sarah (Professional)</Text>
+                            </View>
+                        </View>
+
+                        {/* Play Controls */}
+                        <View style={styles.controlsRow}>
+                            <TouchableOpacity>
+                                <Ionicons name="play-skip-back" size={28} color="#CBD5E1" />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.playButton}>
+                                <Ionicons name="pause" size={32} color="#FFF" />
+                            </TouchableOpacity>
+                            <TouchableOpacity>
+                                <Ionicons name="play-skip-forward" size={28} color="#CBD5E1" />
+                            </TouchableOpacity>
                         </View>
                     </View>
 
-                    <Text style={styles.playerTitle}>AI Ethics: The Global Race to Regulate the...</Text>
-
-                    {/* Visualizer Mock */}
-                    <View style={styles.visualizerContainer}>
-                        {[1, 2, 4, 3, 5, 2, 6, 3, 2, 5, 4, 2].map((val, idx) => (
-                            <View key={idx} style={[styles.bar, { height: val * 10 }]} />
-                        ))}
-                    </View>
-
-                    {/* Progress Bar */}
-                    <View style={styles.progressContainer}>
-                        <View style={styles.progressTrack}>
-                            <View style={styles.progressFill} />
-                        </View>
-                    </View>
-
-                    <View style={styles.timeRow}>
-                        <Text style={styles.timeText}>2:45 remaining</Text>
-                        <View style={styles.authorContainer}>
-                            <Ionicons name="person-circle" size={16} color="#475569" style={{ marginRight: 4 }} />
-                            <Text style={styles.authorText}>AI Voice: Sarah (Professional)</Text>
-                        </View>
-                    </View>
-
-                    {/* Play Controls */}
-                    <View style={styles.controlsRow}>
+                    {/* Section Header */}
+                    <View style={styles.sectionHeader}>
+                        <Text style={styles.sectionTitle}>Tailored for You</Text>
                         <TouchableOpacity>
-                            <Ionicons name="play-skip-back" size={28} color="#CBD5E1" />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.playButton}>
-                            <Ionicons name="pause" size={32} color="#FFF" />
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Ionicons name="play-skip-forward" size={28} color="#CBD5E1" />
+                            <Text style={styles.viewAllText}>View All</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
 
-                {/* Section Header */}
-                <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>Tailored for You</Text>
-                    <TouchableOpacity>
-                        <Text style={styles.viewAllText}>View All</Text>
-                    </TouchableOpacity>
-                </View>
-
-                {/* News List */}
-                <View style={styles.listContainer}>
-                    {NEWS_DATA.map((item) => (
-                        <View key={item.id} style={styles.listItem}>
-                            <Image source={{ uri: item.image }} style={styles.listImage} />
-                            <View style={styles.listContent}>
-                                <Text style={styles.listTitle} numberOfLines={2}>{item.title}</Text>
-                                <View style={styles.listMetaRow}>
-                                    <View style={styles.metaItem}>
-                                        <Ionicons name="time" size={14} color="#64748B" style={{ marginRight: 4 }} />
-                                        <Text style={styles.metaText}>{item.time}</Text>
-                                    </View>
-                                    <View style={styles.metaItem}>
-                                        <Ionicons name="trophy" size={14} color="#64748B" style={{ marginRight: 4 }} />
-                                        <Text style={styles.metaText}>{item.xp}</Text>
+                    {/* News List */}
+                    <View style={styles.listContainer}>
+                        {NEWS_DATA.map((item) => (
+                            <View key={item.id} style={styles.listItem}>
+                                <Image source={{ uri: item.image }} style={styles.listImage} />
+                                <View style={styles.listContent}>
+                                    <Text style={styles.listTitle} numberOfLines={2}>{item.title}</Text>
+                                    <View style={styles.listMetaRow}>
+                                        <View style={styles.metaItem}>
+                                            <Ionicons name="time" size={14} color="#64748B" style={{ marginRight: 4 }} />
+                                            <Text style={styles.metaText}>{item.time}</Text>
+                                        </View>
+                                        <View style={styles.metaItem}>
+                                            <Ionicons name="trophy" size={14} color="#64748B" style={{ marginRight: 4 }} />
+                                            <Text style={styles.metaText}>{item.xp}</Text>
+                                        </View>
                                     </View>
                                 </View>
                             </View>
-                        </View>
-                    ))}
-                </View>
+                        ))}
+                    </View>
 
-            </ScrollView>
+                </ScrollView>
 
-            {/* Floating Bot Button */}
-            <TouchableOpacity style={styles.floatingBot} onPress={() => navigation.navigate('Chatbot')}>
-                <Ionicons name="logo-android" size={32} color="#FFF" />
-            </TouchableOpacity>
+                {/* Floating Bot Button */}
+                <TouchableOpacity style={styles.floatingBot} onPress={() => navigation.navigate('Chatbot')}>
+                    <Ionicons name="logo-android" size={32} color="#FFF" />
+                </TouchableOpacity>
+            </View>
         </SafeAreaView>
     );
 }
 
+const webMaxWidth = Platform.OS === 'web' ? 600 : '100%';
+
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F8FAFC' },
+    container: { flex: 1, backgroundColor: '#F8FAFC', alignItems: 'center' },
+    contentContainer: { width: webMaxWidth, flex: 1, backgroundColor: '#F8FAFC' },
     header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 16, paddingBottom: 16, backgroundColor: '#F8FAFC' },
     langBtn: { backgroundColor: '#E0F2FE', paddingHorizontal: 10, paddingVertical: 8, borderRadius: 8 },
     langText: { color: '#0EA5E9', fontWeight: '800', fontSize: 13 },

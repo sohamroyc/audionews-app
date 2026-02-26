@@ -1,89 +1,151 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, Dimensions, TouchableOpacity, ImageBackground, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
-const INITIAL_REELS = [
-    { id: '1', author: '@PriyaNews', title: 'Summary of the new EV policy', time: '2h ago', status: 'Approved', likes: '1.2k' },
-    { id: '2', author: '@RahulTalks', title: 'Stock Market Breakdown', time: '5h ago', status: 'Approved', likes: '890' },
-    { id: '3', author: '@Me (Pending)', title: 'Local elections insight', time: '1d ago', status: 'In Review Queue', likes: '0' },
-];
+const { width, height } = Dimensions.get('window');
 
 export default function CommunityReelsScreen() {
+    const [liked, setLiked] = useState(false);
+
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.title}>Community Reels</Text>
-                <TouchableOpacity style={styles.createBtn}>
-                    <Ionicons name="add" size={20} color="#FFF" style={{ marginRight: 4 }} />
-                    <Text style={styles.createBtnText}>Post</Text>
-                </TouchableOpacity>
-            </View>
-            <View style={styles.infoBanner}>
-                <Ionicons name="information-circle" size={20} color="#EA580C" style={{ marginRight: 8 }} />
-                <Text style={styles.infoText}>Posts enter a 4-5 day review queue to ensure accuracy.</Text>
-            </View>
+        <SafeAreaView style={styles.safeArea}>
+            <ImageBackground
+                source={{ uri: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop' }}
+                style={styles.container}
+                resizeMode="cover"
+            >
+                {/* Gradient Overlays for readability */}
+                <LinearGradient colors={['rgba(0,0,0,0.6)', 'transparent']} style={styles.topGradient} />
+                <LinearGradient colors={['transparent', 'rgba(0,0,0,0.8)', '#000000']} style={styles.bottomGradient} />
 
-            <FlatList
-                data={INITIAL_REELS}
-                keyExtractor={item => item.id}
-                contentContainerStyle={{ paddingBottom: 40 }}
-                renderItem={({ item }) => (
-                    <View style={styles.reelItem}>
-                        <View style={styles.reelPlaceholder}>
-                            <View style={styles.playButtonOverlay}>
-                                <Ionicons name="play" size={32} color="#FFF" style={{ marginLeft: 4 }} />
+                {/* Header */}
+                <View style={styles.header}>
+                    <TouchableOpacity><Ionicons name="search" size={24} color="#FFF" /></TouchableOpacity>
+                    <Text style={styles.headerTitle}>Community News</Text>
+                    <TouchableOpacity><Ionicons name="notifications" size={24} color="#FFF" /></TouchableOpacity>
+                </View>
+
+                {/* Play Button Center Overlay */}
+                <View style={styles.centerOverlay}>
+                    <View style={styles.playButton}>
+                        <Ionicons name="play" size={40} color="#FFF" style={{ marginLeft: 6 }} />
+                    </View>
+                </View>
+
+                {/* Main Content (Bottom Align) */}
+                <View style={styles.bottomContent}>
+                    {/* Right Toolbar */}
+                    <View style={styles.rightToolbar}>
+                        <TouchableOpacity style={styles.toolbarItem} onPress={() => setLiked(!liked)}>
+                            <View style={styles.iconCircle}>
+                                <Ionicons name={liked ? "heart" : "heart"} size={26} color={liked ? "#EF4444" : "#FFF"} />
                             </View>
-                            <Text style={styles.videoLengthTag}>0:45</Text>
+                            <Text style={styles.toolbarText}>12.4k</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.toolbarItem}>
+                            <View style={styles.iconCircle}>
+                                <Ionicons name="chatbubble" size={24} color="#FFF" />
+                            </View>
+                            <Text style={styles.toolbarText}>842</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.toolbarItem}>
+                            <View style={styles.iconCircle}>
+                                <Ionicons name="share-social" size={24} color="#FFF" />
+                            </View>
+                            <Text style={styles.toolbarText}>205</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={[styles.toolbarItem, { marginTop: 10 }]}>
+                            <View style={styles.diskIcon}>
+                                <View style={styles.diskCenter} />
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* Bottom Info Section */}
+                    <View style={styles.infoSection}>
+                        <View style={styles.authorRow}>
+                            <Image source={{ uri: 'https://i.pravatar.cc/100?img=11' }} style={styles.avatar} />
+                            <View>
+                                <Text style={styles.authorName}>@ai_news_daily</Text>
+                                <Text style={styles.authorTag}>AI SYNTHESIZED VOICE</Text>
+                            </View>
+                            <TouchableOpacity style={styles.followBtn}>
+                                <Text style={styles.followText}>Follow</Text>
+                            </TouchableOpacity>
                         </View>
-                        <View style={styles.reelInfo}>
-                            <Text style={styles.reelTitle} numberOfLines={2}>{item.title}</Text>
-                            <Text style={styles.reelAuthor}>{item.author}</Text>
 
-                            <View style={styles.reelMeta}>
-                                <View style={[styles.statusBadge, item.status.includes('Review') ? styles.pendingBadge : styles.approvedBadge]}>
-                                    <Text style={[styles.statusText, item.status.includes('Review') ? styles.pendingText : styles.approvedText]}>
-                                        {item.status}
-                                    </Text>
-                                </View>
-                                <View style={styles.likesContainer}>
-                                    <Ionicons name="heart" size={16} color="#EF4444" style={{ marginRight: 4 }} />
-                                    <Text style={styles.likesText}>{item.likes}</Text>
-                                </View>
-                            </View>
+                        <Text style={styles.title} numberOfLines={2}>
+                            Major AI breakthrough: Startups adapt new neural architecture for...
+                        </Text>
+
+                        <View style={styles.audioRow}>
+                            <Ionicons name="musical-notes" size={16} color="#38BDF8" style={{ marginRight: 6 }} />
+                            <Text style={styles.audioText}>Original Audio - AI Neural Voice (...</Text>
                         </View>
                     </View>
-                )}
-            />
+                </View>
+
+                {/* Floating Notification Card (Community Guidelines) */}
+                <View style={styles.guidelinesCard}>
+                    <View style={styles.guidelinesHeader}>
+                        <Ionicons name="checkmark-seal" size={16} color="#0EA5E9" style={{ marginRight: 6 }} />
+                        <Text style={styles.guidelinesTitle}>COMMUNITY GUIDELINES</Text>
+                    </View>
+                    <Text style={styles.guidelinesDesc}>Submitted news enters a 4-5 day review queue for verification.</Text>
+                </View>
+
+                {/* Floating Bot Button */}
+                <TouchableOpacity style={styles.floatingBot}>
+                    <Ionicons name="logo-android" size={32} color="#FFF" />
+                </TouchableOpacity>
+
+            </ImageBackground>
         </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F9FAFB' },
-    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 24, paddingTop: 16 },
-    title: { fontSize: 28, fontWeight: '900', color: '#111827', letterSpacing: -0.5 },
-    createBtn: { backgroundColor: '#4F46E5', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, shadowColor: '#4F46E5', shadowOffset: { height: 4, width: 0 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 4 },
-    createBtnText: { color: '#FFF', fontWeight: 'bold', fontSize: 16 },
-    infoBanner: { backgroundColor: '#FFF7ED', marginHorizontal: 24, padding: 14, borderRadius: 16, marginBottom: 24, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: '#FFEDD5' },
-    infoText: { color: '#C2410C', fontSize: 13, lineHeight: 18, flex: 1, fontWeight: '500' },
+    safeArea: { flex: 1, backgroundColor: '#000' },
+    container: { width, height: '100%', justifyContent: 'space-between' },
+    topGradient: { position: 'absolute', top: 0, width: '100%', height: 120 },
+    bottomGradient: { position: 'absolute', bottom: 0, width: '100%', height: 400 },
 
-    reelItem: { backgroundColor: '#FFFFFF', marginHorizontal: 24, marginBottom: 24, borderRadius: 24, overflow: 'hidden', shadowColor: '#000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.05, shadowRadius: 15, elevation: 5 },
-    reelPlaceholder: { height: 220, backgroundColor: '#E5E7EB', justifyContent: 'center', alignItems: 'center' },
-    playButtonOverlay: { backgroundColor: 'rgba(0,0,0,0.3)', width: 64, height: 64, borderRadius: 32, justifyContent: 'center', alignItems: 'center' },
-    videoLengthTag: { position: 'absolute', bottom: 12, right: 12, backgroundColor: 'rgba(0,0,0,0.6)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, color: '#FFF', fontSize: 12, fontWeight: 'bold' },
+    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 16, zIndex: 10 },
+    headerTitle: { color: '#FFF', fontSize: 20, fontWeight: '800' },
 
-    reelInfo: { padding: 20 },
-    reelTitle: { color: '#111827', fontSize: 18, fontWeight: '800', marginBottom: 6 },
-    reelAuthor: { color: '#6B7280', fontSize: 14, marginBottom: 16, fontWeight: '500' },
-    reelMeta: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderTopWidth: 1, borderTopColor: '#F3F4F6', paddingTop: 16 },
+    centerOverlay: { ...StyleSheet.absoluteFillObject, justifyContent: 'center', alignItems: 'center', zIndex: 1 },
+    playButton: { width: 72, height: 72, borderRadius: 36, backgroundColor: 'rgba(255,255,255,0.3)', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.5)' },
 
-    statusBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
-    statusText: { fontSize: 12, fontWeight: '700', textTransform: 'uppercase' },
-    approvedBadge: { backgroundColor: '#DCFCE7' },
-    approvedText: { color: '#166534' },
-    pendingBadge: { backgroundColor: '#FEF9C3' },
-    pendingText: { color: '#854D0E' },
+    bottomContent: { flex: 1, justifyContent: 'flex-end', paddingBottom: 60, zIndex: 5 },
 
-    likesContainer: { flexDirection: 'row', alignItems: 'center' },
-    likesText: { color: '#4B5563', fontSize: 14, fontWeight: '600' }
+    rightToolbar: { position: 'absolute', right: 16, bottom: 120, alignItems: 'center' },
+    toolbarItem: { alignItems: 'center', marginBottom: 20 },
+    iconCircle: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center', marginBottom: 6 },
+    toolbarText: { color: '#FFF', fontSize: 13, fontWeight: '700' },
+    diskIcon: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#333', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: '#FFF' },
+    diskCenter: { width: 12, height: 12, borderRadius: 6, backgroundColor: '#FFF' },
+
+    infoSection: { paddingHorizontal: 20, width: '85%' },
+    authorRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
+    avatar: { width: 44, height: 44, borderRadius: 22, borderWidth: 2, borderColor: '#38BDF8', marginRight: 12 },
+    authorName: { color: '#FFF', fontSize: 16, fontWeight: '700' },
+    authorTag: { color: '#38BDF8', fontSize: 11, fontWeight: '800', marginTop: 2 },
+    followBtn: { backgroundColor: '#0EA5E9', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, marginLeft: 16 },
+    followText: { color: '#FFF', fontSize: 13, fontWeight: '700' },
+
+    title: { color: '#FFF', fontSize: 18, fontWeight: '700', lineHeight: 26, marginBottom: 12 },
+
+    audioRow: { flexDirection: 'row', alignItems: 'center' },
+    audioText: { color: '#FFF', fontSize: 14, fontWeight: '500' },
+
+    guidelinesCard: { position: 'absolute', bottom: 100, alignSelf: 'center', backgroundColor: '#F8FAFC', padding: 16, borderRadius: 16, width: '90%', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 10, elevation: 5, zIndex: 20 },
+    guidelinesHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
+    guidelinesTitle: { color: '#0EA5E9', fontSize: 12, fontWeight: '800' },
+    guidelinesDesc: { color: '#475569', fontSize: 13, lineHeight: 18 },
+
+    floatingBot: { position: 'absolute', bottom: 20, right: 20, backgroundColor: '#0EA5E9', width: 60, height: 60, borderRadius: 30, justifyContent: 'center', alignItems: 'center', borderWidth: 4, borderColor: '#FFF', elevation: 8, shadowColor: '#0EA5E9', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8, zIndex: 10 }
 });

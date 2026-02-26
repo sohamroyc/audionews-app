@@ -1,85 +1,135 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TextInput, TouchableOpacity, KeyboardAvoidingView, ScrollView, Platform, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+
+const { width } = Dimensions.get('window');
 
 export default function ChatbotScreen({ navigation }) {
     const [messages, setMessages] = useState([
-        { id: '1', text: "Hi! I'm your AudioNews AI support assistant. How can I help you today?", isBot: true },
+        { id: '1', role: 'bot', text: 'Hello! I\'m your AI news assistant. How can I help you with your news listening experience or rewards today?' },
+        { id: '2', role: 'user', text: 'How do I withdraw my reward gems?' },
+        { id: '3', role: 'bot', text: 'To withdraw your gems, go to your Rewards Dashboard and tap on the \'Claim\' button. You need at least 500 gems to make your first withdrawal. 💎', highlighted: 'Rewards Dashboard' }
     ]);
     const [inputText, setInputText] = useState('');
 
-    const handleSend = () => {
-        if (!inputText.trim()) return;
-
-        const userMessage = { id: Date.now().toString(), text: inputText, isBot: false };
-        setMessages([...messages, userMessage]);
-        setInputText('');
-
-        // Simulate bot response
-        setTimeout(() => {
-            const botMessage = { id: (Date.now() + 1).toString(), text: "Thanks for reaching out! A human agent will address your query regarding the latest news curation shortly.", isBot: true };
-            setMessages(prev => [...prev, botMessage]);
-        }, 1000);
-    };
+    const suggestions = ['Login Issues', 'Voice Options', 'Change Language'];
 
     return (
         <SafeAreaView style={styles.container}>
+            {/* Header */}
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-                    <Ionicons name="close" size={24} color="#111827" />
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+                    <Ionicons name="chevron-back" size={24} color="#0EA5E9" />
+                    <Text style={styles.backText}>Back</Text>
                 </TouchableOpacity>
-                <View style={styles.headerInfo}>
-                    <View style={styles.avatarBg}>
-                        <Ionicons name="headset" size={20} color="#4F46E5" />
-                    </View>
-                    <Text style={styles.headerTitle}>Help & Support</Text>
-                </View>
-                <View style={{ width: 40 }} />
+                <Text style={styles.headerTitle}>Support</Text>
+                <TouchableOpacity>
+                    <Ionicons name="information-circle" size={24} color="#111827" />
+                </TouchableOpacity>
             </View>
 
-            <FlatList
-                data={messages}
-                keyExtractor={item => item.id}
-                contentContainerStyle={styles.chatList}
-                renderItem={({ item }) => (
-                    <View style={[styles.messageBubble, item.isBot ? styles.botBubble : styles.userBubble]}>
-                        <Text style={[styles.messageText, item.isBot ? styles.botText : styles.userText]}>{item.text}</Text>
-                    </View>
-                )}
-            />
+            {/* Chat Area */}
+            <ScrollView contentContainerStyle={styles.chatScroll} showsVerticalScrollIndicator={false}>
+                <Text style={styles.dateSeparator}>TODAY</Text>
 
-            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.inputArea}>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Type your message..."
-                    placeholderTextColor="#9CA3AF"
-                    value={inputText}
-                    onChangeText={setInputText}
-                    multiline
-                />
-                <TouchableOpacity style={styles.sendBtn} onPress={handleSend}>
-                    <Ionicons name="send" size={20} color="#FFF" style={{ marginLeft: 4 }} />
-                </TouchableOpacity>
+                {messages.map((msg, idx) => (
+                    <View key={msg.id} style={[styles.messageWrapper, msg.role === 'user' ? styles.userMessageWrapper : styles.botMessageWrapper]}>
+
+                        {msg.role === 'bot' && (
+                            <View style={styles.botAvatar}>
+                                <Ionicons name="logo-android" size={16} color="#0EA5E9" />
+                            </View>
+                        )}
+
+                        <View style={{ maxWidth: '85%' }}>
+                            {msg.role === 'bot' && idx !== 2 && <Text style={styles.botName}>VOX SUPPORT BOT</Text>}
+                            {msg.role === 'bot' && idx === 2 && <Text style={styles.botName}>VOX SUPPORT BOT</Text>}
+                            {msg.role === 'user' && <Text style={styles.userName}>YOU <View style={styles.userAvatarPlaceholder}></View></Text>}
+
+                            <View style={[styles.messageBubble, msg.role === 'user' ? styles.userBubble : styles.botBubble]}>
+                                {msg.highlighted ? (
+                                    <Text style={[styles.messageText, msg.role === 'user' ? styles.userText : styles.botText]}>
+                                        To withdraw your gems, go to your <Text style={styles.highlightText}>{msg.highlighted}</Text> and tap on the 'Claim' button. You need at least 500 gems to make your first withdrawal. 💎
+                                    </Text>
+                                ) : (
+                                    <Text style={[styles.messageText, msg.role === 'user' ? styles.userText : styles.botText]}>{msg.text}</Text>
+                                )}
+                            </View>
+                        </View>
+                    </View>
+                ))}
+            </ScrollView>
+
+            {/* Bottom Actions Area */}
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.bottomArea}>
+                <View style={styles.suggestionsContainer}>
+                    {suggestions.map((item, index) => (
+                        <TouchableOpacity key={index} style={styles.suggestionChip}>
+                            <Text style={styles.suggestionText}>{item}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
+
+                <View style={styles.inputContainer}>
+                    <View style={styles.inputWrapper}>
+                        <View style={styles.inputBotIcon}>
+                            <Ionicons name="logo-android" size={24} color="#0EA5E9" />
+                        </View>
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder="Type your question..."
+                            placeholderTextColor="#9CA3AF"
+                            value={inputText}
+                            onChangeText={setInputText}
+                        />
+                    </View>
+                    <TouchableOpacity style={styles.sendButton}>
+                        <Ionicons name="send" size={20} color="#FFF" style={{ marginLeft: 4 }} />
+                    </TouchableOpacity>
+                </View>
             </KeyboardAvoidingView>
         </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F9FAFB' },
-    header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 16, paddingBottom: 16, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
-    backBtn: { padding: 8, backgroundColor: '#F3F4F6', borderRadius: 20 },
-    headerInfo: { flexDirection: 'row', alignItems: 'center' },
-    avatarBg: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#EEF2FF', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+    container: { flex: 1, backgroundColor: '#FFFFFF' },
+
+    header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
+    backButton: { flexDirection: 'row', alignItems: 'center' },
+    backText: { color: '#0EA5E9', fontSize: 16, fontWeight: '600', marginLeft: 2 },
     headerTitle: { fontSize: 18, fontWeight: '800', color: '#111827' },
-    chatList: { padding: 20, paddingBottom: 40 },
-    messageBubble: { padding: 16, borderRadius: 20, marginBottom: 12, maxWidth: '80%' },
-    botBubble: { backgroundColor: '#FFFFFF', alignSelf: 'flex-start', borderBottomLeftRadius: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 2 },
-    userBubble: { backgroundColor: '#4F46E5', alignSelf: 'flex-end', borderBottomRightRadius: 4 },
-    messageText: { fontSize: 15, lineHeight: 22 },
-    botText: { color: '#374151' },
-    userText: { color: '#FFF' },
-    inputArea: { flexDirection: 'row', alignItems: 'flex-end', padding: 16, backgroundColor: '#FFFFFF', borderTopWidth: 1, borderTopColor: '#F3F4F6' },
-    input: { flex: 1, backgroundColor: '#F3F4F6', borderRadius: 24, paddingHorizontal: 20, paddingTop: 16, paddingBottom: 16, fontSize: 16, color: '#111827', maxHeight: 120 },
-    sendBtn: { width: 52, height: 52, borderRadius: 26, backgroundColor: '#4F46E5', justifyContent: 'center', alignItems: 'center', marginLeft: 12, shadowColor: '#4F46E5', shadowOffset: { height: 4, width: 0 }, shadowOpacity: 0.3, shadowRadius: 6, elevation: 4 }
+
+    chatScroll: { padding: 20, paddingBottom: 40 },
+    dateSeparator: { alignSelf: 'center', color: '#64748B', fontSize: 12, fontWeight: '700', marginVertical: 16, letterSpacing: 1 },
+
+    messageWrapper: { flexDirection: 'row', marginBottom: 24, alignItems: 'flex-start' },
+    botMessageWrapper: { justifyContent: 'flex-start' },
+    userMessageWrapper: { justifyContent: 'flex-end', alignItems: 'flex-start' },
+
+    botAvatar: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#F0F9FF', justifyContent: 'center', alignItems: 'center', marginRight: 12, marginTop: 24 },
+    botName: { color: '#64748B', fontSize: 11, fontWeight: '800', marginBottom: 8, textTransform: 'uppercase' },
+    userName: { color: '#64748B', fontSize: 11, fontWeight: '800', marginBottom: 8, alignSelf: 'flex-end', textTransform: 'uppercase', flexDirection: 'row', alignItems: 'center' },
+    userAvatarPlaceholder: { width: 24, height: 24, backgroundColor: '#FED7AA', borderRadius: 12, marginLeft: 8 },
+
+    messageBubble: { padding: 18, borderRadius: 20 },
+    botBubble: { backgroundColor: '#F8FAFC', borderTopLeftRadius: 4 },
+    userBubble: { backgroundColor: '#0EA5E9', borderTopRightRadius: 4 },
+
+    messageText: { fontSize: 16, lineHeight: 24, fontWeight: '500' },
+    botText: { color: '#1E293B' },
+    userText: { color: '#FFFFFF' },
+    highlightText: { color: '#0EA5E9', fontWeight: '700' },
+
+    bottomArea: { backgroundColor: '#FFFFFF', paddingHorizontal: 16, paddingBottom: 24 },
+    suggestionsContainer: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 16 },
+    suggestionChip: { borderWidth: 1, borderColor: '#E2E8F0', paddingVertical: 10, paddingHorizontal: 16, borderRadius: 20, marginRight: 10, marginBottom: 10 },
+    suggestionText: { color: '#0EA5E9', fontSize: 14, fontWeight: '800' },
+
+    inputContainer: { flexDirection: 'row', alignItems: 'center' },
+    inputWrapper: { flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#F1F5F9', borderRadius: 30, paddingHorizontal: 6, paddingVertical: 6, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 10, elevation: 3 },
+    inputBotIcon: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#F0F9FF', justifyContent: 'center', alignItems: 'center', marginRight: 8 },
+    textInput: { flex: 1, fontSize: 15, color: '#1E293B', paddingRight: 10 },
+
+    sendButton: { width: 56, height: 56, borderRadius: 28, backgroundColor: '#0EA5E9', justifyContent: 'center', alignItems: 'center', marginLeft: 12, shadowColor: '#0EA5E9', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 5 }
 });

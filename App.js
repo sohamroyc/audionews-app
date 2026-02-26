@@ -31,7 +31,7 @@ function MainTabNavigator() {
           else if (route.name === 'Rewards') iconName = focused ? 'gift' : 'gift-outline';
           return <Ionicons name={iconName} size={size + 2} color={color} />;
         },
-        tabBarActiveTintColor: '#4F46E5',  // Vibrant Indigo
+        tabBarActiveTintColor: '#0EA5E9',  // Light Blue to match design
         tabBarInactiveTintColor: '#9CA3AF', // Gray
         tabBarStyle: {
           backgroundColor: '#FFFFFF',
